@@ -332,7 +332,7 @@ module Kafka
 
       @group.join
 
-      if old_generation_id && @group.generation_id != old_generation_id + 1
+      if (old_generation_id && @group.generation_id != old_generation_id + 1) || !@offset_manager.commit_enabled
         # We've been out of the group for at least an entire generation, no
         # sense in trying to hold on to offset data
         @offset_manager.clear_offsets
