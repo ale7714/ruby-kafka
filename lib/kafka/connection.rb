@@ -196,6 +196,11 @@ module Kafka
       end
     end
 
+    def reopen
+      close
+      open
+    end
+
     def with_retry
       retried = false
 

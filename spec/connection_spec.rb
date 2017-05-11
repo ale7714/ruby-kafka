@@ -153,5 +153,18 @@ describe Kafka::Connection do
       expect(event.payload[:request_size]).to eq 22
       expect(event.payload[:response_size]).to eq 12
     end
+
+    it "retries the request if the connection has been closed" do
+      connection.send_request(request)
+      broker.kill
+
+      server.close
+      server = TCPServer.new(host, port)
+      FakeServer.start(server)
+
+      response = connection.send_request(request)
+
+      expect(response).to eq "hello!"
+    end
   end
 end
