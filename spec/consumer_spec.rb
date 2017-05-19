@@ -166,6 +166,13 @@ describe Kafka::Consumer do
     end
   end
 
+  describe "#send_heartbeat_if_necessary" do
+    it "delegates to heartbeat" do
+      expect(heartbeat).to receive(:send_if_necessary)
+      consumer.send_heartbeat_if_necessary
+    end
+  end
+
   describe "#each_batch" do
     let(:messages) {
       [
