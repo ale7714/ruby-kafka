@@ -288,6 +288,14 @@ module Kafka
       @offset_manager.mark_as_processed(message.topic, message.partition, message.offset)
     end
 
+    def subscribed_partitions
+      @group.subscribed_partitions
+    end
+
+    def send_heartbeat_if_necessary
+      @heartbeat.send_if_necessary
+    end
+
     private
 
     def consumer_loop
@@ -309,7 +317,7 @@ module Kafka
     ensure
       # In order to quickly have the consumer group re-balance itself, it's
       # important that members explicitly tell Kafka when they're leaving.
-      make_final_offsets_commit!
+      make_final_offsets_commit! if @offset_manager.commit_enabled
       @group.leave rescue nil
       @running = false
     end
@@ -332,7 +340,7 @@ module Kafka
 
       @group.join
 
-      if old_generation_id && @group.generation_id != old_generation_id + 1
+      if (old_generation_id && @group.generation_id != old_generation_id + 1) || !@offset_manager.commit_enabled
         # We've been out of the group for at least an entire generation, no
         # sense in trying to hold on to offset data
         @offset_manager.clear_offsets

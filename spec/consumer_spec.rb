@@ -30,6 +30,7 @@ describe Kafka::Consumer do
     allow(cluster).to receive(:add_target_topics)
     allow(cluster).to receive(:refresh_metadata_if_necessary!)
 
+    allow(offset_manager).to receive(:commit_enabled)
     allow(offset_manager).to receive(:commit_offsets)
     allow(offset_manager).to receive(:commit_offsets_if_necessary)
     allow(offset_manager).to receive(:set_default_offset)
@@ -162,6 +163,13 @@ describe Kafka::Consumer do
     it "delegates to offset_manager" do
       expect(offset_manager).to receive(:commit_offsets)
       consumer.commit_offsets
+    end
+  end
+
+  describe "#send_heartbeat_if_necessary" do
+    it "delegates to heartbeat" do
+      expect(heartbeat).to receive(:send_if_necessary)
+      consumer.send_heartbeat_if_necessary
     end
   end
 
