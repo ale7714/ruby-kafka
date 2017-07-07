@@ -289,12 +289,24 @@ module Kafka
     # you will want to do this in every consumer group member in order to make sure
     # that the member that's assigned the partition knows where to start.
     #
-    # @param topic [String] 
-    # @param partition [Integer] 
-    # @param offset [Integer] 
+    # @param topic [String]
+    # @param partition [Integer]
+    # @param offset [Integer]
     # @return [nil]
     def seek(topic, partition, offset)
       @offset_manager.seek_to(topic, partition, offset)
+    end
+
+    # @param min_bytes [Integer] the minimum number of bytes to read before
+    #   returning messages from the server; if `max_wait_time` is reached, this
+    #   is ignored.
+    # @param max_wait_time [Integer, Float] the maximum duration of time to wait before
+    #   returning messages from the server, in seconds.
+    # @return batch [Kafka::FetchedBatch] a message batch fetched from Kafka.
+    def poll(min_bytes: 1, max_wait_time: 5)
+      batches = fetch_batches(min_bytes: min_bytes, max_wait_time: max_wait_time)
+      send_heartbeat_if_necessary
+      batches
     end
 
     def commit_offsets
