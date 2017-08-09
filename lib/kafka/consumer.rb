@@ -321,6 +321,10 @@ module Kafka
       @heartbeat.send_if_necessary
     end
 
+    def subscribed_partitions
+      @group.subscribed_partitions
+    end
+
     private
 
     def consumer_loop
