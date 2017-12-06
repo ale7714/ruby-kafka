@@ -60,6 +60,7 @@ module SpecHelpers
   end
 
   def create_topic(name, num_partitions: 1, num_replicas: 1)
+    puts kafka_brokers
     kafka.create_topic(name, num_partitions: num_partitions, replication_factor: num_replicas)
   end
 end
@@ -70,7 +71,7 @@ module FunctionalSpecHelpers
       let(:logger) { LOGGER }
       let(:kafka_brokers) { KAFKA_BROKERS }
       let(:kafka) { Kafka.new(seed_brokers: kafka_brokers, client_id: "test", logger: logger) }
-
+      
       after { kafka.close rescue nil }
     end
   end

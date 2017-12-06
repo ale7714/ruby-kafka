@@ -45,7 +45,9 @@ describe "Compression", functional: true do
       partition: 0,
       offset: last_offset + 1,
     )
-
+    puts messages.size
+    puts messages.map(&:offset)
+    expect(messages.map(&:offset)).to eq [0,1]
     expect(messages.last(2).map(&:value)).to eq ["message1", "message2"]
   end
 
